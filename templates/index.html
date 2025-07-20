@@ -5,11 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IGXDOWN - Instagram Video Downloader</title>
 
-    <!-- PWA Meta Tags -->
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#833ab4">
-    <link rel="apple-touch-icon" href="/static/icons/icon-192x192.png">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,17 +56,6 @@
     </footer>
 
     <script>
-        // PWA Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').then(registration => {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                }, err => {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
-            });
-        }
-
         function showSpinner() {
             const button = document.getElementById('download-button');
             const buttonText = document.getElementById('button-text');
@@ -80,13 +64,9 @@
             button.disabled = true;
             buttonText.innerText = 'Downloading...';
             spinner.classList.remove('hidden');
-
-            // Hide the spinner after 3 seconds
-            setTimeout(() => {
-                hideSpinner();
-            }, 3000);
         }
 
+        // This function is no longer called automatically, but kept for potential future use
         function hideSpinner() {
             const button = document.getElementById('download-button');
             const buttonText = document.getElementById('button-text');
@@ -99,7 +79,10 @@
 
         // Use pageshow to reset state, as it's more reliable than onload
         window.addEventListener('pageshow', (event) => {
-            hideSpinner();
+            // If the page is being loaded from the cache (e.g., after back button), reset the button
+            if (event.persisted) {
+                hideSpinner();
+            }
         });
     </script>
 </body>

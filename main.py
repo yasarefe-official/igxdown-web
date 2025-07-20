@@ -11,14 +11,6 @@ INSTAGRAM_SESSION_ID = os.environ.get('INSTAGRAM_SESSION_ID')
 if not os.path.exists(DOWNLOAD_FOLDER):
     os.makedirs(DOWNLOAD_FOLDER)
 
-@app.route('/sw.js')
-def serve_sw():
-    return send_from_directory('.', 'sw.js')
-
-@app.route('/manifest.json')
-def serve_manifest():
-    return send_from_directory('.', 'manifest.json')
-
 @app.route('/')
 def index():
     return render_template('index.html')
