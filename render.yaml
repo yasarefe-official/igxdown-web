@@ -11,6 +11,8 @@ services:
         value: 3.9
       - key: FLASK_APP
         value: main:app
+      - key: INSTAGRAM_SESSION_ID
+        value: "" # Optional: Add your session ID here or in the Render dashboard
     disk:
       name: downloads
       mountPath: /app/downloads
