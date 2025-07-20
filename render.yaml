@@ -2,7 +2,7 @@ services:
   - type: web
     name: instagram-downloader
     env: docker
-    repo: https://github.com/your-username/your-repo-name # Important: Change this to your repository URL
+    repo: https://github.com/yasarefe-official/igxdown-web # Important: Change this to your repository URL
     region: frankfurt # Optional: Choose a region closer to you
     plan: free # Optional: Choose a plan
     healthCheckPath: /
