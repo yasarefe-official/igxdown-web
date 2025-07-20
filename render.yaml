@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: instagram-downloader
+    env: docker
+    repo: https://github.com/your-username/your-repo-name # Important: Change this to your repository URL
+    region: frankfurt # Optional: Choose a region closer to you
+    plan: free # Optional: Choose a plan
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9
+      - key: FLASK_APP
+        value: main:app
+    disk:
+      name: downloads
+      mountPath: /app/downloads
+      sizeGB: 1
+    autoDeploy: yes
