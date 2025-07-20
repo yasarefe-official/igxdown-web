@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IGXDOWN - Instagram Video Downloader</title>
+
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#833ab4">
+    <link rel="apple-touch-icon" href="/static/icons/icon-192x192.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,8 +23,8 @@
         }
     </style>
 </head>
-<body class="gradient-bg flex items-center justify-center min-h-screen">
-    <div class="bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-2xl w-full max-w-lg transform transition-all hover:scale-105">
+<body class="gradient-bg flex flex-col items-center justify-center min-h-screen">
+    <div class="bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-2xl w-full max-w-lg transform transition-all hover:scale-105 m-4">
         <div class="text-center mb-8">
             <h1 class="text-4xl font-bold text-gray-800">IGXDOWN</h1>
             <p class="text-gray-600 mt-2">The fastest way to download Instagram videos.</p>
@@ -48,22 +54,51 @@
         </div>
     </div>
 
+    <footer class="text-center py-4">
+        <a href="https://github.com/yasarefe-official/igxdown-web" target="_blank" rel="noopener noreferrer" class="text-white/80 hover:text-white transition-colors">
+            View on GitHub
+        </a>
+    </footer>
+
     <script>
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+
         function showSpinner() {
-            document.getElementById('download-button').disabled = true;
-            document.getElementById('button-text').innerText = 'Downloading...';
-            document.getElementById('spinner').classList.remove('hidden');
+            const button = document.getElementById('download-button');
+            const buttonText = document.getElementById('button-text');
+            const spinner = document.getElementById('spinner');
+
+            button.disabled = true;
+            buttonText.innerText = 'Downloading...';
+            spinner.classList.remove('hidden');
+
+            // Hide the spinner after 3 seconds
+            setTimeout(() => {
+                hideSpinner();
+            }, 3000);
         }
 
         function hideSpinner() {
-            document.getElementById('download-button').disabled = false;
-            document.getElementById('button-text').innerText = 'Download Video';
-            document.getElementById('spinner').classList.add('hidden');
+            const button = document.getElementById('download-button');
+            const buttonText = document.getElementById('button-text');
+            const spinner = document.getElementById('spinner');
+
+            button.disabled = false;
+            buttonText.innerText = 'Download Video';
+            spinner.classList.add('hidden');
         }
 
-        // Listen for page load/show events to reset the button state
-        window.addEventListener('pageshow', function(event) {
-            // The pageshow event is more reliable than onload, especially with bfcache
+        // Use pageshow to reset state, as it's more reliable than onload
+        window.addEventListener('pageshow', (event) => {
             hideSpinner();
         });
     </script>
