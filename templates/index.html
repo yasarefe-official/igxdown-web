@@ -25,7 +25,7 @@
             <p class="text-gray-600 mt-2">The fastest way to download Instagram videos.</p>
         </div>
 
-        <form id="download-form" action="/download" method="post" onsubmit="showSpinner()">
+        <form id="download-form" action="/download" method="post">
             <input type="text" name="url" class="w-full px-5 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-4 focus:ring-purple-400/50 transition-shadow" placeholder="Paste Instagram link here..." required>
             <button id="download-button" type="submit" class="w-full mt-5 bg-gradient-to-r from-purple-600 to-red-500 hover:from-purple-700 hover:to-red-600 text-white font-bold py-3 px-4 rounded-full flex items-center justify-center shadow-lg transform hover:-translate-y-1 transition-all">
                 <span id="button-text">Download Video</span>
@@ -56,34 +56,79 @@
     </footer>
 
     <script>
-        function showSpinner() {
-            const button = document.getElementById('download-button');
-            const buttonText = document.getElementById('button-text');
-            const spinner = document.getElementById('spinner');
+        const downloadForm = document.getElementById('download-form');
+        const downloadButton = document.getElementById('download-button');
+        const buttonText = document.getElementById('button-text');
+        const spinner = document.getElementById('spinner');
 
-            button.disabled = true;
+        function showSpinner() {
+            downloadButton.disabled = true;
             buttonText.innerText = 'Downloading...';
             spinner.classList.remove('hidden');
         }
 
-        // This function is no longer called automatically, but kept for potential future use
         function hideSpinner() {
-            const button = document.getElementById('download-button');
-            const buttonText = document.getElementById('button-text');
-            const spinner = document.getElementById('spinner');
-
-            button.disabled = false;
+            downloadButton.disabled = false;
             buttonText.innerText = 'Download Video';
             spinner.classList.add('hidden');
         }
 
-        // Use pageshow to reset state, as it's more reliable than onload
-        window.addEventListener('pageshow', (event) => {
-            // If the page is being loaded from the cache (e.g., after back button), reset the button
-            if (event.persisted) {
+        downloadForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            showSpinner();
+
+            const formData = new FormData(downloadForm);
+            const url = formData.get('url');
+
+            // Clear previous messages
+            const messageContainer = document.getElementById('message-container');
+            messageContainer.innerHTML = '';
+
+            try {
+                const response = await fetch('/download', {
+                    method: 'POST',
+                    body: new URLSearchParams(formData)
+                });
+
+                if (response.ok) {
+                    const contentDisposition = response.headers.get('Content-Disposition');
+                    let filename = 'download.mp4'; // Fallback filename
+                    if (contentDisposition) {
+                        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+                        if (filenameMatch.length > 1) {
+                            filename = filenameMatch[1];
+                        }
+                    }
+
+                    const blob = await response.blob();
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = downloadUrl;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(downloadUrl);
+                    a.remove();
+
+                    hideSpinner();
+                } else {
+                    // This handles redirects, which indicates an error flash message.
+                    // The server redirects back to the index page with a flashed message.
+                    // Reloading the page will display this message.
+                    window.location.reload();
+                }
+            } catch (error) {
+                console.error('Download error:', error);
+                // In case of a network error or other fetch failure, show a generic error.
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'p-4 rounded-lg bg-red-100 text-red-800 border border-red-300';
+                errorDiv.innerText = 'An unexpected network error occurred. Please try again.';
+                messageContainer.appendChild(errorDiv);
                 hideSpinner();
             }
         });
+
     </script>
 </body>
 </html>
