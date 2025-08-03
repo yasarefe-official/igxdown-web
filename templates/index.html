@@ -26,7 +26,30 @@
         </div>
 
         <form id="download-form">
-            <input type="text" id="url-input" name="url" class="w-full px-5 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-4 focus:ring-purple-400/50 transition-shadow" placeholder="Paste video link here..." required>
+            <input type="text" id="url-input" name="url" class="w-full px-5 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-4 focus:ring-purple-400/50 transition-shadow" placeholder="Paste YouTube or Instagram link here..." required>
+
+            <div class="mt-4">
+                <label class="block text-center text-gray-700 text-sm font-bold mb-2">Select Format:</label>
+                <div class="flex justify-center items-center space-x-4">
+                    <label class="flex items-center space-x-2">
+                        <input type="radio" name="format" value="mp4" class="form-radio text-purple-600" checked>
+                        <span class="text-gray-700">MP4</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="radio" name="format" value="mp3" class="form-radio text-purple-600">
+                        <span class="text-gray-700">MP3</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="radio" name="format" value="opus" class="form-radio text-purple-600">
+                        <span class="text-gray-700">OPUS</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="radio" name="format" value="wav" class="form-radio text-purple-600">
+                        <span class="text-gray-700">WAV</span>
+                    </label>
+                </div>
+            </div>
+
             <button id="download-button" type="submit" class="w-full mt-5 bg-gradient-to-r from-purple-600 to-red-500 hover:from-purple-700 hover:to-red-600 text-white font-bold py-3 px-4 rounded-full flex items-center justify-center shadow-lg transform hover:-translate-y-1 transition-all">
                 <span id="button-text">Download Video</span>
                 <svg id="spinner" class="animate-spin h-5 w-5 text-white ml-3 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -72,7 +95,7 @@
 
         function hideSpinner() {
             downloadButton.disabled = false;
-            buttonText.innerText = 'Download Video';
+            buttonText.innerText = 'Download';
             spinner.classList.add('hidden');
         }
 
@@ -128,33 +151,36 @@
                         showSpinner('Downloading...');
                         const percent = (task.progress * 100).toFixed(1);
                         progressBar.style.width = `${percent}%`;
-                        progressText.innerText = `${percent}% @ ${task.speed || '...'} (ETA: ${task.eta || '...'}s)`;
-                    } else if (task.status === 'complete') {
-                        progressText.innerText = 'Download complete! Preparing file...';
+                        progressText.innerText = `Downloading: ${percent}% @ ${task.speed || '...'} (ETA: ${task.eta || '...'}s)`;
+                    } else if (task.status === 'processing') {
+                        showSpinner('Processing...');
+                        progressBar.style.width = `100%`;
+                        progressText.innerText = task.message || 'Processing...';
+                    }
+                    else if (task.status === 'complete') {
+                        progressText.innerText = 'Download complete! Your file will start downloading automatically.';
                         eventSource.close();
 
-                        // Create a link to trigger the download
                         const downloadUrl = `/get-file/${taskId}`;
                         const a = document.createElement('a');
                         a.style.display = 'none';
                         a.href = downloadUrl;
-                        // The filename is now handled by the backend's Content-Disposition header
                         document.body.appendChild(a);
                         a.click();
                         a.remove();
 
                         setTimeout(() => {
                            resetUI();
-                           showMessage('Your download has started.', false);
+                           showMessage('Download started successfully.', false);
                         }, 2000);
 
                     } else if (task.status === 'error') {
                         showMessage(task.message || 'An unknown error occurred.', true);
                         eventSource.close();
                         resetUI();
-                    } else if (task.status === 'starting') {
+                    } else if (task.status === 'starting' || task.status === 'pending') {
                          showSpinner('Starting...');
-                         progressText.innerText = 'Starting download... please wait.';
+                         progressText.innerText = 'Starting download, please wait...';
                     }
                 };
 
