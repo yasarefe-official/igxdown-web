@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IGXDOWN - Instagram Video Downloader</title>
+    <title>Video Downloader</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,12 +21,12 @@
 <body class="gradient-bg flex flex-col items-center justify-center min-h-screen">
     <div class="bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-2xl w-full max-w-lg transform transition-all hover:scale-105 m-4">
         <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-800">IGXDOWN</h1>
-            <p class="text-gray-600 mt-2">The fastest way to download Instagram videos.</p>
+            <h1 class="text-4xl font-bold text-gray-800">Video Downloader</h1>
+            <p class="text-gray-600 mt-2">Download videos from hundreds of platforms.</p>
         </div>
 
         <form id="download-form" action="/download" method="post">
-            <input type="text" name="url" class="w-full px-5 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-4 focus:ring-purple-400/50 transition-shadow" placeholder="Paste Instagram link here..." required>
+            <input type="text" name="url" class="w-full px-5 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-4 focus:ring-purple-400/50 transition-shadow" placeholder="Paste video link here..." required>
             <button id="download-button" type="submit" class="w-full mt-5 bg-gradient-to-r from-purple-600 to-red-500 hover:from-purple-700 hover:to-red-600 text-white font-bold py-3 px-4 rounded-full flex items-center justify-center shadow-lg transform hover:-translate-y-1 transition-all">
                 <span id="button-text">Download Video</span>
                 <svg id="spinner" class="animate-spin h-5 w-5 text-white ml-3 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -46,6 +46,17 @@
                     {% endfor %}
                 {% endif %}
             {% endwith %}
+        </div>
+
+        <div class="text-center mt-8 text-gray-700">
+            <h3 class="font-semibold">Desteklenen Platformlar</h3>
+            <p class="text-sm mt-2">
+                YouTube, Instagram, Facebook, Twitter, TikTok ve daha yüzlercesi!
+                <br>
+                <a href="https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md" target="_blank" rel="noopener noreferrer" class="text-purple-600 hover:underline">
+                    Desteklenen tüm platformların tam listesini görmek için tıklayın.
+                </a>
+            </p>
         </div>
     </div>
 
