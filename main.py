@@ -35,7 +35,7 @@ def run_download(task_id, url, format_choice):
 
     try:
         # Get video metadata to determine filename and extension
-        info_command = ['yt-dlp', '--dump-json', url]
+        info_command = ['yt-dlp', '--dump-json', '--cookies-from-browser', 'firefox', '--no-warnings', url]
         info_process = subprocess.run(info_command, check=True, capture_output=True, text=True, timeout=60)
         video_info = json.loads(info_process.stdout)
         original_filename = video_info.get('title', 'media')
@@ -48,7 +48,7 @@ def run_download(task_id, url, format_choice):
         tasks[task_id]['filename'] = f"{original_filename}.{final_ext}"
 
         # Build the command based on format
-        command = ['yt-dlp', '--no-check-certificate']
+        command = ['yt-dlp', '--no-check-certificate', '--cookies-from-browser', 'firefox', '--no-warnings']
 
         if format_choice == 'mp4':
             command.extend([
