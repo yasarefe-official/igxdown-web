@@ -22,10 +22,6 @@ def download():
         flash('No URL provided.', 'error')
         return redirect(url_for('index'))
 
-    if not ('instagram.com/p/' in url or 'instagram.com/reel/' in url):
-        flash('Invalid Instagram URL. Please use a valid post or reel link.', 'error')
-        return redirect(url_for('index'))
-
     video_id = str(uuid.uuid4())
     output_template = os.path.join(DOWNLOAD_FOLDER, f'{video_id}.%(ext)s')
 
